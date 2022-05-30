@@ -3,9 +3,8 @@ import inspect
 import time
 from statistics import mean, stdev
 
-from CybORG import CybORG, CYBORG_VERSION
+from CybORG import CybORG #, CYBORG_VERSION
 from CybORG.Agents import B_lineAgent, SleepAgent
-from CybORG.Agents.SimpleAgents.BaseAgent import BaseAgent
 from CybORG.Agents.SimpleAgents.BlueLoadAgent import BlueLoadAgent
 from CybORG.Agents.SimpleAgents.BlueReactAgent import BlueReactRemoveAgent
 from CybORG.Agents.SimpleAgents.Meander import RedMeanderAgent
@@ -14,6 +13,7 @@ from CybORG.Agents.Wrappers.FixedFlatWrapper import FixedFlatWrapper
 from CybORG.Agents.Wrappers.OpenAIGymWrapper import OpenAIGymWrapper
 from CybORG.Agents.Wrappers.ReduceActionSpaceWrapper import ReduceActionSpaceWrapper
 from CybORG.Agents.Wrappers import ChallengeWrapper
+from stable_baselines3 import PPO, A2C, DQN, HER, DDPG, SAC, TD3
 
 MAX_EPS = 100
 agent_name = 'Blue'
@@ -26,7 +26,7 @@ def get_git_revision_hash() -> str:
     return subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
 
 if __name__ == "__main__":
-    cyborg_version = CYBORG_VERSION
+    cyborg_version = '2.0' #CYBORG_VERSION
     scenario = 'Scenario2'
     commit_hash = get_git_revision_hash()
     # ask for a name
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     wrap_line = lines.split('\n')[1].split('return ')[1]
 
     # Change this line to load your agent
-    agent = BlueLoadAgent()
+    agent = DQN.load("DQN against RedMeanderAgent")
 
     print(f'Using agent {agent.__class__.__name__}, if this is incorrect please update the code to load in your agent')
 
@@ -73,7 +73,8 @@ if __name__ == "__main__":
                 a = []
                 # cyborg.env.env.tracker.render()
                 for j in range(num_steps):
-                    action = agent.get_action(observation, action_space)
+                    # action = agent.get_action(observation, action_space)
+                    action, _states = agent.predict(observation)
                     observation, rew, done, info = wrapped_cyborg.step(action)
                     # result = cyborg.step(agent_name, action)
                     r.append(rew)
