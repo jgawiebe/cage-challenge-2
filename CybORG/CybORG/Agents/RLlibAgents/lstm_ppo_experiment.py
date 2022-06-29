@@ -23,7 +23,7 @@ from ray.rllib.models.catalog import ModelCatalog
 from ray.rllib.utils.framework import try_import_torch
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--train-iterations", type=int, default=10)
+# parser.add_argument("--train-iterations", type=int, default=10)
 torch, _ = try_import_torch()
 
 # The custom model that will be wrapped by an LSTM.
@@ -60,7 +60,7 @@ register_env("cyborg", env_creator)
 
 def experiment(config):
 
-    iterations = config.pop("train-iterations")
+    iterations = 1000 #config.pop("train-iterations")
     algo = ppo.PPO(config=config, env="cyborg")
     checkpoint = None
     train_results = {}
@@ -96,6 +96,7 @@ if __name__ == "__main__":
     ray.init(num_cpus=3)
     config = ppo.DEFAULT_CONFIG.copy()
     config={
+        "env": "cyborg",
         "framework": "torch",
         "model": {
             # Auto-wrap the custom(!) model with an LSTM.
@@ -108,8 +109,6 @@ if __name__ == "__main__":
             "custom_model_config": {},
         }
     }
-    config["train-iterations"] = args.train_iterations
-    config["env"] = "cyborg"
     tune.run(
         experiment,
         config=config,

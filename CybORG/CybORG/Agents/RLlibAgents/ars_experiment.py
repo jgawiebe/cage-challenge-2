@@ -15,11 +15,11 @@ import argparse
 
 import ray
 from ray import tune
-import ray.rllib.algorithms.ppo as ppo
+import ray.rllib.algorithms.ars as ars
 from ray.tune.registry import register_env
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--train-iterations", type=int, default=100)
+# parser.add_argument("--train-iterations", type=int, default=100)
 
 def env_creator(env_config):
     path = str(inspect.getfile(CybORG))
@@ -32,15 +32,15 @@ register_env("cyborg", env_creator)
 
 def experiment(config):
 
-    iterations = config.pop("train-iterations")
-    algo = ppo.PPO(config=config, env="cyborg")
+    iterations = 10000 #config.pop("train-iterations")
+    algo = ars.ARS(config=config, env="cyborg")
     checkpoint = None
     train_results = {}
 
     # Train
     for i in range(iterations):
         train_results = algo.train()
-        if i % 2 == 0 or i == iterations - 1:
+        if i % 100 == 0 or i == iterations - 1:
             checkpoint = algo.save(tune.get_trial_dir())
         tune.report(**train_results)
     algo.stop()
@@ -66,15 +66,12 @@ def experiment(config):
 if __name__ == "__main__":
     args = parser.parse_args()
 
-    ray.init(num_cpus=3)
-    config = ppo.DEFAULT_CONFIG.copy()
+    ray.init(num_gpus=1)
+    config = ars.DEFAULT_CONFIG.copy()
     config["train-iterations"] = args.train_iterations
-
-
-    config["env"] = "cyborg"
 
     tune.run(
         experiment,
         config=config,
-        resources_per_trial=ppo.PPO.default_resource_request(config),
+        resources_per_trial=ars.ARS.default_resource_request(config),
     )
