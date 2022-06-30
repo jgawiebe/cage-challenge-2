@@ -24,10 +24,10 @@
     </thead>
     <tbody>
         <tr>
-            <th>Tuned PPO (130)</th>
+            <th>Tuned PPO</th>
         </tr>
         <tr>
-            <td>B-Line (100)</td>
+            <td>B-Line (130)</td>
             <td>-11.12 ± 3.22</td>
             <td>-12.59 ± 3.13</td>
             <td>-1.09 ± 0.99</td>
