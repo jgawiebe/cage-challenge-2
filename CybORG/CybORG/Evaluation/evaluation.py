@@ -52,7 +52,7 @@ if __name__ == "__main__":
         data.write(f"wrappers: {wrap_line}\n")
 
     path = str(inspect.getfile(CybORG))
-    path = path[:-10] + '/Shared/Scenarios/Scenario1b.yaml'
+    path = path[:-10] + f'/Shared/Scenarios/{scenario}.yaml'
 
     print(f'using CybORG v{cyborg_version}, {scenario}\n')
     for num_steps in [30, 50, 100]:
@@ -80,6 +80,7 @@ if __name__ == "__main__":
                     r.append(rew)
                     # r.append(result.reward)
                     a.append((str(cyborg.get_last_action('Blue')), str(cyborg.get_last_action('Red'))))
+                agent.end_episode()
                 total_reward.append(sum(r))
                 actions.append(a)
                 # observation = cyborg.reset().observation
