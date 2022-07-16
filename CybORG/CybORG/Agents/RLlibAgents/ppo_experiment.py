@@ -23,7 +23,7 @@ def wrap(env):
 
 def evaluate(steps, trainer):
     path = str(inspect.getfile(CybORG))
-    path = path[:-10] + '/Shared/Scenarios/Scenario2.yaml'
+    path = path[:-10] + '/Shared/Scenarios/Scenario1b.yaml'
     obs = []
     #print(f'using CybORG v{cyborg_version}, {scenario}\n')
     for num_steps in steps:
@@ -62,7 +62,7 @@ def evaluate(steps, trainer):
 
 def env_creator(env_config):
     path = str(inspect.getfile(CybORG))
-    path = path[:-10] + '/Shared/Scenarios/Scenario2.yaml'
+    path = path[:-10] + '/Shared/Scenarios/Scenario1b.yaml'
     agents = {"Red": B_lineAgent, "Green": GreenAgent}
     cyborg = CybORG(scenario_file=path, environment='sim', agents=agents)
     env = ChallengeWrapper(env=cyborg, agent_name='Blue')
@@ -72,7 +72,7 @@ register_env("cyborg", env_creator)
 
 def experiment(config):
 
-    iterations = 5000 #config.pop("train-iterations")
+    iterations = 10000
     trainer = ppo.PPO(config=config, env="cyborg")
     checkpoint = None
     train_results = {}
@@ -85,7 +85,7 @@ def experiment(config):
     for i in range(iterations):
         train_results = trainer.train()
         tune.report(**train_results)
-        if i % 100 == 0 or i == iterations - 1:
+        if i % 500 == 0 or i == iterations - 1:
             checkpoint = trainer.save(tune.get_trial_dir())
             r, o, a = evaluate([50], trainer)
             reward.append(r)
@@ -106,14 +106,14 @@ if __name__ == "__main__":
     config['env'] = 'cyborg'
     config['num_gpus'] = 1
     config["num_workers"] = 3
-    config['horizon'] = 1000
+    config['horizon'] = 1024
     config['train_batch_size'] = 1024
     config['sgd_minibatch_size'] = 128
     config['rollout_fragment_length'] = 100
-    # config['model'] = {
-    #     "fcnet_hiddens": [512, 512],
-    #     "fcnet_activation": "relu"
-    # }
+    config['model'] = {
+        "fcnet_hiddens": [512, 512],
+        "fcnet_activation": "relu"
+    }
     config['batch_mode'] = "truncate_episodes"
     config['lambda'] = 0.95
     config['kl_coeff'] = 0.5
