@@ -2,7 +2,7 @@ from random import choice
 
 from CybORG.Shared import Observation
 from CybORG.Shared.Actions import Action
-from CybORG.Shared.Actions.ConcreteActions.DropFile import DropFile
+from CybORG.Shared.Actions.ConcreteActions.AddFile import AddFile
 from CybORG.Simulator.State import State
 
 
@@ -34,7 +34,7 @@ class Tamper(Action):
             session = choice(sessions).ident
 
         # put file on host using chosen session
-        sub_action = DropFile(session=self.session, agent=self.agent, target_session=session)
+        sub_action = AddFile(session=self.session, agent=self.agent, target_session=session)
         obs = sub_action.sim_execute(state)
 
         return obs

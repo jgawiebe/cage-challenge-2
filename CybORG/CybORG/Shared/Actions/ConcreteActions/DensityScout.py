@@ -24,5 +24,6 @@ class DensityScout(ConcreteAction):
         obs.set_success(True)
         for file in target_host.files:
             obs.add_file_info(hostid=target_host.hostname, name=file.name, path=file.path, density=file.density)
+            session.add_sus_files(target_host.hostname, file.path, file.name)
 
         return obs

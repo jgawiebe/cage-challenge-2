@@ -14,4 +14,5 @@ from .DecoySSHD import DecoySSHD
 from .DecoySvchost import DecoySvchost
 from .DecoyTomcat import DecoyTomcat
 from .DecoyVsftpd import DecoyVsftpd
-from .DropFile import DropFile
+from .AddFile import AddFile
+from .RemoveFile import RemoveFile

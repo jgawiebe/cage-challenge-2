@@ -1,29 +1,32 @@
 from CybORG.Shared import Observation
 from CybORG.Shared.Actions.ConcreteActions.ConcreteAction import ConcreteAction
 from CybORG.Simulator.Host import Host
+from CybORG.Simulator.Process import Process
 from CybORG.Simulator.State import State
 
 
-class SigCheck(ConcreteAction):
-    def __init__(self, session: int, agent: str, target_session: int):
-        super(SigCheck, self).__init__(session=session, agent=agent)
+class RemoveFile(ConcreteAction):
+    def __init__(self, session: int, agent: str, target_session: int, path: str, file_name: str):
+        super(RemoveFile, self).__init__(session, agent)
+        self.file_name = file_name
+        self.path = path
         self.target_session = target_session
 
     def sim_execute(self, state: State) -> Observation:
         obs = Observation()
+        obs.set_success(False)
         if self.session not in state.sessions[self.agent] or self.target_session not in state.sessions[self.agent]:
-            obs.set_success(False)
             return obs
         target_host: Host = state.hosts[state.sessions[self.agent][self.target_session].host]
         session = state.sessions[self.agent][self.session]
         target_session = state.sessions[self.agent][self.target_session]
 
         if not session.active or not target_session.active:
-            obs.set_success(False)
             return obs
-        obs.set_success(True)
-        for file in target_host.files:
-            obs.add_file_info(hostid=target_host.hostname, name=file.name, path=file.path, signed=file.signed)
-            session.add_sus_files(target_host.hostname, file.path, file.name)
 
+        file = target_host.get_file(self.file_name, self.path)
+        if file is not None:
+            obs.set_success(True)
+            target_host.files.remove(file)
+            # note that files in scenario will not repopulate
         return obs

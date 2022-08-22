@@ -9,3 +9,4 @@ from .Misinform import Misinform
 from .PrivilegeEscalate import PrivilegeEscalate
 from .Impact import Impact
 from .Tamper import Tamper
+from .DataRepair import DataRepair
