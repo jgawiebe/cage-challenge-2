@@ -260,6 +260,7 @@ Agents:
     - ExploitRemoteService
     - PrivilegeEscalate
     - Impact
+    - Tamper
     agent_type: SleepAgent
     reward_calculator_type: HybridImpactPwn
     starting_sessions:
