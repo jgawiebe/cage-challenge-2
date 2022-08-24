@@ -35,9 +35,11 @@ class AddFile(ConcreteAction):
             return Observation(False)
 
         obs = Observation()
+        name = 'secret.txt'
         username = target_host.get_process(session.pid).user
-        target_host.add_file(f'secret.txt', path, username, 7,
+        target_host.add_file(name, path, username, 7,
                 density=0.9, signed=False)
                 
         obs.set_success(True)
+        obs.add_file_info(hostid=target_host.hostname, path=path, name=name)
         return obs

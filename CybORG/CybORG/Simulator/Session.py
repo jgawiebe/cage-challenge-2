@@ -8,7 +8,7 @@ from CybORG.Simulator.Entity import Entity
 
 class Session(Entity):
 
-    def __init__(self, ident: int, host: str, username: str, agent: str,
+    def __init__(self, ident: int, host: str, username: str,agent: str,
                  pid: int, timeout: int = 0, session_type: str = 'shell', 
                  active: bool = True, parent=None, name=None,
                  is_escalate_sandbox: bool = False):
@@ -90,3 +90,9 @@ class VelociraptorServer(Session):
             self.sus_pids[hostname].append(pid)
         else:
             self.sus_pids[hostname] = [pid]
+
+    def add_sus_files(self, hostname: str, path: str, file: str):
+        if hostname in self.sus_files:
+            self.sus_files[hostname].append([path, file])
+        else:
+            self.sus_files[hostname] = ([[path, file]])
