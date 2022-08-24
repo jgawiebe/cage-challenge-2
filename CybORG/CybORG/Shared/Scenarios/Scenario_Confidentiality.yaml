@@ -66,9 +66,8 @@ Agents:
       - Remove
       - Misinform
       - Restore
-      - DataRepair
     agent_type: SleepAgent
-    reward_calculator_type: BlueIntegrity
+    reward_calculator_type: Confidentiality
     starting_sessions:
       - hostname: User0
         name: VeloUser0
@@ -260,9 +259,8 @@ Agents:
     - DiscoverNetworkServices
     - ExploitRemoteService
     - PrivilegeEscalate
-    - Tamper
     agent_type: SleepAgent
-    reward_calculator_type: RedIntegrity
+    reward_calculator_type: Pwn
     starting_sessions:
     - hostname: User0
       name: RedPhish

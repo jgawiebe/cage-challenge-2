@@ -6,11 +6,12 @@ from CybORG.Shared import Scenario
 from CybORG.Shared.ActionSpace import ActionSpace
 from CybORG.Shared.Actions.Action import Action
 from CybORG.Shared.BaselineRewardCalculator import BaselineRewardCalculator
-from CybORG.Shared.BlueRewardCalculator import HybridAvailabilityConfidentialityRewardCalculator
+from CybORG.Shared.BlueRewardCalculator import HybridAvailabilityConfidentialityRewardCalculator, ConfidentialityRewardCalculator
 from CybORG.Shared.Observation import Observation
 from CybORG.Shared.RedRewardCalculator import DistruptRewardCalculator, PwnRewardCalculator, \
     HybridImpactPwnRewardCalculator
-from CybORG.Shared.NewRedRewardCalculator import AvailabilityCalculator, IntegrityCalculator
+from CybORG.Shared.NewRedRewardCalculator import DoSRewardCalculator, TamperRewardCalculator
+from CybORG.Shared.NewBlueRewardCalculator import QoSRewardCalculator, IntegrityRewardCalculator
 from CybORG.Shared.Results import Results
 from CybORG.Shared.RewardCalculator import RewardCalculator, EmptyRewardCalculator
 
@@ -122,8 +123,6 @@ class AgentInterface:
         calc = None
         if reward_calculator == "Baseline":
             calc = BaselineRewardCalculator(agent_name)
-        elif reward_calculator == 'Pwn':
-            calc = PwnRewardCalculator(agent_name, scenario)
         elif reward_calculator == 'Disrupt':
             calc = DistruptRewardCalculator(agent_name, scenario)
         elif reward_calculator == 'None' or reward_calculator is None:
@@ -132,11 +131,19 @@ class AgentInterface:
             calc = HybridAvailabilityConfidentialityRewardCalculator(agent_name, scenario)
         elif reward_calculator == 'HybridImpactPwn':
             calc = HybridImpactPwnRewardCalculator(agent_name, scenario)
+        elif reward_calculator == 'BlueConfidentiality':
+            calc = ConfidentialityRewardCalculator(agent_name, scenario)
+        elif reward_calculator == 'RedConfidentiality':
+            calc = PwnRewardCalculator(agent_name, scenario)
         # new calculators start here
-        elif reward_calculator == 'Availability':
-            calc = AvailabilityCalculator(agent_name, scenario)
-        elif reward_calculator == 'Integrity':
-            calc = IntegrityCalculator(agent_name, scenario)
+        elif reward_calculator == 'BlueAvailability':
+            calc = QoSRewardCalculator(agent_name, scenario)
+        elif reward_calculator == 'RedAvailability':
+            calc = DoSRewardCalculator(agent_name, scenario)
+        elif reward_calculator == 'BlueIntegrity':
+            calc = IntegrityRewardCalculator(agent_name, scenario)
+        elif reward_calculator == 'RedIntegrity':
+            calc = TamperRewardCalculator(agent_name, scenario)
         else:
             raise ValueError(f"Invalid calculator selection: {reward_calculator} for agent {agent_name}")
         return calc

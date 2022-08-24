@@ -64,11 +64,9 @@ Agents:
       - Monitor
       - Analyse
       - Remove
-      - Misinform
       - Restore
     agent_type: SleepAgent
-    # this will give a positive reward as the blue calculator isn't set up yet
-    reward_calculator_type: Availability
+    reward_calculator_type: BlueAvailability
     starting_sessions:
       - hostname: User0
         name: VeloUser0
@@ -260,9 +258,10 @@ Agents:
     - DiscoverNetworkServices
     - ExploitRemoteService
     - PrivilegeEscalate
+    - Impact
     - Disrupt
     agent_type: SleepAgent
-    reward_calculator_type: Availability
+    reward_calculator_type: RedAvailability
     starting_sessions:
     - hostname: User0
       name: RedPhish

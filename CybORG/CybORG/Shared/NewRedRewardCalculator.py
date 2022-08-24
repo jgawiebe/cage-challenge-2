@@ -38,10 +38,10 @@ class SparseConfidentialityCalculator(RewardCalculator):
 # the disruptRewardCalculator relies on the presence of OTservice to determine its reward. It checks to see if the
 # process exists and gives a reward if it doesn't. This should be expanded to include all services,
 # with OTService being higher reward but each service having some impact to the total score. 
-class AvailabilityCalculator(RewardCalculator):
+class DoSRewardCalculator(RewardCalculator):
     # calculates the reward for disrupting the network
     def __init__(self, agent_name: str, scenario: Scenario):
-        super(AvailabilityCalculator, self).__init__(agent_name)
+        super(DoSRewardCalculator, self).__init__(agent_name)
         self.scenario = scenario
         self.procs = None
         self.mapping = {'None': 0.0,
@@ -98,10 +98,10 @@ class AvailabilityCalculator(RewardCalculator):
         reward = sum(disrupted.values())
         return round(reward, REWARD_MAX_DECIMAL_PLACES)
 
-class IntegrityCalculator(RewardCalculator):
+class TamperRewardCalculator(RewardCalculator):
     # calculates the reward for modifying data on the hosts
     def __init__(self, agent_name: str, scenario: Scenario):
-        super(IntegrityCalculator, self).__init__(agent_name)
+        super(TamperRewardCalculator, self).__init__(agent_name)
         self.scenario = scenario
         self.files = None
         self.mapping = {'None': 0.0,
@@ -126,6 +126,6 @@ class IntegrityCalculator(RewardCalculator):
                                 
         # get availability values (to be changed to integrity values)             
         availability_scores = [self.mapping[self.scenario.get_host(i).get('AvailabilityValue', 'Low')] for i in disrupted]
-        #self.impacted_hosts = dict(zip(disrupted,availability_scores))
+        self.impacted_hosts = dict(zip(disrupted,availability_scores))
         reward = sum(availability_scores)
         return round(reward, REWARD_MAX_DECIMAL_PLACES)
