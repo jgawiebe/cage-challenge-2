@@ -67,7 +67,7 @@ Agents:
       - Misinform
       - Restore
     agent_type: SleepAgent
-    reward_calculator_type: Confidentiality
+    reward_calculator_type: BlueConfidentiality
     starting_sessions:
       - hostname: User0
         name: VeloUser0
@@ -260,7 +260,7 @@ Agents:
     - ExploitRemoteService
     - PrivilegeEscalate
     agent_type: SleepAgent
-    reward_calculator_type: Pwn
+    reward_calculator_type: RedConfidentiality
     starting_sessions:
     - hostname: User0
       name: RedPhish

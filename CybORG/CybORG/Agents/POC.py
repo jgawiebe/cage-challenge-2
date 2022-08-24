@@ -4,19 +4,22 @@ import inspect
 from CybORG.Agents.SimpleAgents.KeyboardAgent import KeyboardAgent
 from CybORG.Agents.SimpleAgents.GreenAgent import GreenAgent
 from CybORG.Agents.Wrappers.BlueTableWrapper import BlueTableWrapper
-from CybORG.Agents import B_lineAgent, BlueReactRemoveAgent
+from CybORG.Agents import B_lineAgent, BlueReactRemoveAgent, BlueReactRestoreAgent
 from CybORG.Agents.SimpleAgents.Meander import RedMeanderAgent
+from CybORG.Agents.SimpleAgents.RedConfidentiality import RedConfidentialityAgent
 
 if __name__ == "__main__":
     print("Setup")
     path = str(inspect.getfile(CybORG))
-    path = path[:-10] + '/Shared/Scenarios/Scenario_Integrity.yaml'
+    path = path[:-10] + '/Shared/Scenarios/Scenario_Confidentiality.yaml'
+    #path = path[:-10] + '/Shared/Scenarios/Scenario_Confidentiality.yaml'
+    #path = path[:-10] + '/Shared/Scenarios/Scenario_Confidentiality.yaml'
 
-    agents = {'Red': RedMeanderAgent,'Green': GreenAgent}
+    agents = {'Red': RedConfidentialityAgent,'Green': GreenAgent}
     env = CybORG(path, 'sim', agents=agents)
     
     agent_name = 'Blue'
-    agent = BlueReactRemoveAgent()
+    agent = BlueReactRestoreAgent()
 
     results = env.reset(agent=agent_name)
 
@@ -34,7 +37,6 @@ if __name__ == "__main__":
                 hosts.append(results.observation[obs_info]['System info']['Hostname'])
         print(env.get_last_action(agent='Red'), hosts)
         print(env.get_last_action(agent='Blue'))
-        #print(results.observation[])
         print('>>> Reward: ', env.get_rewards())
 
         reward += results.reward
