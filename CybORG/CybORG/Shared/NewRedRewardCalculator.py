@@ -43,7 +43,7 @@ class DoSRewardCalculator(RewardCalculator):
     def __init__(self, agent_name: str, scenario: Scenario):
         super(DoSRewardCalculator, self).__init__(agent_name)
         self.scenario = scenario
-        self.procs = None
+        self.procs = {}
         self.mapping = {'None': 0.0,
                         'Low': 0.1,
                         'Medium': 1.0,
@@ -52,14 +52,13 @@ class DoSRewardCalculator(RewardCalculator):
         self.impacted_hosts = {}
 
     def reset(self):
-        self.procs = None
+        self.procs = {}
 
     def calculate_reward(self, current_state: dict, action: dict, agent_observations: dict, done: bool):
         self.impacted_hosts = {}
-        disrupted = {}
+        disrupted = []
         # run this block if there's no history on scenario processes
-        if self.procs is None:
-            self.procs = {}
+        if self.procs == {}:
             # make a dict of all processes indexed by host
             for host_info in current_state.values():
                 if type(host_info) is not dict:
@@ -67,35 +66,36 @@ class DoSRewardCalculator(RewardCalculator):
                 # check this line in debugger
                 hostname = host_info['System info']['Hostname']
                 if 'Processes' in host_info:
-                    proc_list = []
-                    for proc in host_info['Processes']:
-                        proc_list.append(proc)
-                    self.procs[hostname] = proc_list
+                    #proc_list = [proc for proc in host_info['Processes']]
+                    #self.procs[hostname] = proc_list
+                    proc_list = [proc['Process Name'] for proc in host_info['Processes']]
+                    pid_list = [proc['PID'] for proc in host_info['Processes']]
+                    self.procs[hostname] = dict(zip(proc_list, pid_list))
+                     
         # compare list of procs that should be there to the list discovered
         for host_info in current_state.values():
             if type(host_info) is not dict:
                 continue
             # step through existing hosts
             hostname = host_info['System info']['Hostname']
-            if hostname in self.procs:
-                if 'Processes' in host_info:
-                    # iterate over processes that should exist to isolate missing ones
-                    for proc in self.procs[hostname]:
-                        if proc not in host_info['Processes']:
-                            # less elegant solution is to just count up procs
-                            if hostname in disrupted:
-                                disrupted[hostname] += 1
-                            else:
-                                disrupted[hostname] = 1
+            if hostname in self.procs and 'Processes' in host_info:
+                # get new dict of process name-pid pairs
+                updated_proc_list = [proc['Process Name'] for proc in host_info['Processes']]
+                updated_pid_list = [proc['PID'] for proc in host_info['Processes']]
+                new_procs = dict(zip(updated_proc_list, updated_pid_list))
+
+                for proc in updated_proc_list:
+                    if new_procs.get(proc) != self.procs[hostname].get(proc):
+                        # check for a change in PID
+                        disrupted.append(hostname)
+                self.procs[hostname] = new_procs
 
         # get availability values                    
         availability_scores = [self.mapping[self.scenario.get_host(i).get('AvailabilityValue', 'Low')] for i in disrupted]
         # sum disrupted hosts
         self.impacted_hosts = dict(zip(disrupted,availability_scores))
-        for host in self.impacted_hosts:
-            disrupted[host] *= self.impacted_hosts[host]
 
-        reward = sum(disrupted.values())
+        reward = sum(availability_scores)
         return round(reward, REWARD_MAX_DECIMAL_PLACES)
 
 class TamperRewardCalculator(RewardCalculator):
@@ -103,17 +103,16 @@ class TamperRewardCalculator(RewardCalculator):
     def __init__(self, agent_name: str, scenario: Scenario):
         super(TamperRewardCalculator, self).__init__(agent_name)
         self.scenario = scenario
-        self.files = None
+        self.files = []
         self.mapping = {'None': 0.0,
                         'Low': 0.1,
                         'Medium': 1.0,
                         'High': 10.0}
 
     def reset(self):
-        self.files = None
+        self.files = []
 
     def calculate_reward(self, current_state: dict, action: dict, agent_observations: dict, done: bool):
-        disrupted = []
         for hostname in agent_observations['Red'].data:
             obs_info = agent_observations['Red'].data[hostname]
             if type(obs_info) is not dict:
@@ -122,10 +121,10 @@ class TamperRewardCalculator(RewardCalculator):
                 # iterate over files in the current obs and give reward for each 'secret.txt'
                 for file in obs_info['Files']:
                     if file['File Name'] == 'secret.txt':
-                        disrupted.append(hostname)
+                        self.files.append(hostname)
                                 
         # get availability values (to be changed to integrity values)             
-        availability_scores = [self.mapping[self.scenario.get_host(i).get('AvailabilityValue', 'Low')] for i in disrupted]
-        self.impacted_hosts = dict(zip(disrupted,availability_scores))
+        availability_scores = [self.mapping[self.scenario.get_host(i).get('IntegrityValue', 'Low')] for i in self.files]
+        self.impacted_hosts = dict(zip(self.files,availability_scores))
         reward = sum(availability_scores)
         return round(reward, REWARD_MAX_DECIMAL_PLACES)

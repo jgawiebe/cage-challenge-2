@@ -65,7 +65,7 @@ Agents:
       - Analyse
       - Remove
       - Restore
-    agent_type: SleepAgent
+    agent_type: BlueMonitorAgent
     reward_calculator_type: BlueAvailability
     starting_sessions:
       - hostname: User0
@@ -333,7 +333,7 @@ Hosts:
       User0:
         Interfaces: All
     ConfidentialityValue: None
-    AvailabilityValue: None
+    AvailabilityValue: Low
   User1:
     AWS_Info: []
     image: windows_user_host1
@@ -342,7 +342,7 @@ Hosts:
         Interfaces: IP Address
       User1:
         Interfaces: All
-    AvailabilityValue: None
+    AvailabilityValue: Low
   User2:
     AWS_Info: []
     image: windows_user_host2
@@ -351,7 +351,7 @@ Hosts:
         Interfaces: IP Address
       User2:
         Interfaces: All
-    AvailabilityValue: None
+    AvailabilityValue: Low
   User3:
     AWS_Info: []
     image: linux_user_host1
@@ -360,7 +360,7 @@ Hosts:
         Interfaces: IP Address
       User3:
         Interfaces: All
-    AvailabilityValue: None
+    AvailabilityValue: Low
   User4:
     AWS_Info: []
     image: linux_user_host2
@@ -369,7 +369,7 @@ Hosts:
         Interfaces: IP Address
       User4:
         Interfaces: All
-    AvailabilityValue: None
+    AvailabilityValue: Low
 Subnets:
   Enterprise:
     Hosts:
