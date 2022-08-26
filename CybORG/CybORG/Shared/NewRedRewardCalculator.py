@@ -15,7 +15,8 @@ LOSE_SESSION_REWARD = 0
 LOSE_ROOT_SESSION_REWARD = 0
 
 REWARD_MAX_DECIMAL_PLACES = 1
-HostReward = namedtuple('HostReward','confidentiality availability')
+HostAvailability = namedtuple('HostAvailability','confidentiality availability')
+HostIntegrity = namedtuple('HostIntegrity','confidentiality integrity')
 
 # supposed to wrap Pwn calculator with a done clause, need to understand how inheritance works...
 class SparseConfidentialityCalculator(RewardCalculator):
@@ -128,3 +129,67 @@ class TamperRewardCalculator(RewardCalculator):
         self.impacted_hosts = dict(zip(self.files,availability_scores))
         reward = sum(availability_scores)
         return round(reward, REWARD_MAX_DECIMAL_PLACES)
+
+
+class HybridDoSRewardCalculator(RewardCalculator):
+    # Hybrid of availability and confidentiality reward calculator
+    def __init__(self, agent_name: str, scenario: Scenario):
+        super(HybridDoSRewardCalculator, self).__init__(agent_name)
+        self.pwn_calculator = PwnRewardCalculator(agent_name, scenario)
+        self.disrupt_calculator = DoSRewardCalculator(agent_name, scenario)
+        self.host_scores = {}
+
+    def reset(self):
+        self.pwn_calculator.reset()
+        self.disrupt_calculator.reset()
+
+    def calculate_reward(self, current_state: dict, action: dict, agent_observations: dict, done: bool) -> float:
+        reward = self.pwn_calculator.calculate_reward(current_state, action, agent_observations, done) \
+                 + self.disrupt_calculator.calculate_reward(current_state, action, agent_observations, done)
+
+        self._compute_host_scores(current_state.keys())
+        return round(reward, REWARD_MAX_DECIMAL_PLACES)
+
+    def _compute_host_scores(self, hostnames):
+        self.host_scores = {}
+        compromised_hosts = self.pwn_calculator.compromised_hosts
+        impacted_hosts = self.disrupt_calculator.impacted_hosts
+        for host in hostnames:
+            if host == 'success':
+                continue
+            compromised = compromised_hosts[host] if host in compromised_hosts else 0
+            impacted = impacted_hosts[host] if host in impacted_hosts else 0
+            reward_state = HostAvailability(compromised,impacted)  
+                                    # confidentiality, availability
+            self.host_scores[host] = reward_state
+
+class HybridTamperRewardCalculator(RewardCalculator):
+    # Hybrid of availability and confidentiality reward calculator
+    def __init__(self, agent_name: str, scenario: Scenario):
+        super(HybridTamperRewardCalculator, self).__init__(agent_name)
+        self.pwn_calculator = PwnRewardCalculator(agent_name, scenario)
+        self.disrupt_calculator = TamperRewardCalculator(agent_name, scenario)
+        self.host_scores = {}
+
+    def reset(self):
+        self.pwn_calculator.reset()
+        self.disrupt_calculator.reset()
+
+    def calculate_reward(self, current_state: dict, action: dict, agent_observations: dict, done: bool) -> float:
+        reward = self.pwn_calculator.calculate_reward(current_state, action, agent_observations, done) \
+                 + self.disrupt_calculator.calculate_reward(current_state, action, agent_observations, done)
+
+        self._compute_host_scores(current_state.keys())
+        return round(reward, REWARD_MAX_DECIMAL_PLACES)
+
+    def _compute_host_scores(self, hostnames):
+        self.host_scores = {}
+        compromised_hosts = self.pwn_calculator.compromised_hosts
+        impacted_hosts = self.disrupt_calculator.impacted_hosts
+        for host in hostnames:
+            if host == 'success':
+                continue
+            compromised = compromised_hosts[host] if host in compromised_hosts else 0
+            impacted = impacted_hosts[host] if host in impacted_hosts else 0
+            reward_state = HostIntegrity(compromised,impacted)  
+            self.host_scores[host] = reward_state

@@ -66,8 +66,9 @@ Agents:
       - Remove
       - Misinform
       - Restore
+      - DataRepair
     agent_type: SleepAgent
-    reward_calculator_type: BlueConfidentiality
+    reward_calculator_type: HybridBlueIntegrity
     starting_sessions:
       - hostname: User0
         name: VeloUser0
@@ -259,8 +260,9 @@ Agents:
     - DiscoverNetworkServices
     - ExploitRemoteService
     - PrivilegeEscalate
-    agent_type: RedMeanderAgent
-    reward_calculator_type: RedConfidentiality
+    - Tamper
+    agent_type: RedIntegrityAgent
+    reward_calculator_type: HybridRedIntegrity
     starting_sessions:
     - hostname: User0
       name: RedPhish
@@ -278,7 +280,7 @@ Hosts:
       Enterprise0:
         Interfaces: All
     ConfidentialityValue: Medium
-    AvailabilityValue: Medium
+    IntegrityValue: Medium
   Enterprise1:
     AWS_Info: []
     image: Internal
@@ -286,7 +288,7 @@ Hosts:
       Enterprise1:
         Interfaces: All
     ConfidentialityValue: Medium
-    AvailabilityValue: Medium
+    IntegrityValue: Medium
   Enterprise2:
     AWS_Info: []
     image: Internal
@@ -296,7 +298,7 @@ Hosts:
       Op_Server0:
         Interfaces: IP Address
     ConfidentialityValue: Medium
-    AvailabilityValue: Medium
+    IntegrityValue: Medium
   Op_Host0:
     AWS_Info: []
     image: Gateway
@@ -324,7 +326,7 @@ Hosts:
         Services:
         - OTService
     ConfidentialityValue: Medium
-    AvailabilityValue: High
+    IntegrityValue: High
   User0:
     AWS_Info: []
     image: windows_user_host1
@@ -332,7 +334,7 @@ Hosts:
       User0:
         Interfaces: All
     ConfidentialityValue: None
-    AvailabilityValue: None
+    IntegrityValue: Low
   User1:
     AWS_Info: []
     image: windows_user_host1
@@ -341,7 +343,7 @@ Hosts:
         Interfaces: IP Address
       User1:
         Interfaces: All
-    AvailabilityValue: None
+    IntegrityValue: Low
   User2:
     AWS_Info: []
     image: windows_user_host2
@@ -350,7 +352,7 @@ Hosts:
         Interfaces: IP Address
       User2:
         Interfaces: All
-    AvailabilityValue: None
+    IntegrityValue: Low
   User3:
     AWS_Info: []
     image: linux_user_host1
@@ -359,7 +361,7 @@ Hosts:
         Interfaces: IP Address
       User3:
         Interfaces: All
-    AvailabilityValue: None
+    IntegrityValue: Low
   User4:
     AWS_Info: []
     image: linux_user_host2
@@ -368,7 +370,7 @@ Hosts:
         Interfaces: IP Address
       User4:
         Interfaces: All
-    AvailabilityValue: None
+    IntegrityValue: Low
 Subnets:
   Enterprise:
     Hosts:

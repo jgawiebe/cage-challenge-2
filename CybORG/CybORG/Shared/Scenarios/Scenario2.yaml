@@ -275,6 +275,7 @@ Agents:
     - PrivilegeEscalate
     - Impact
     - SSHBruteForce
+    - AddFile
     agent_type: SleepAgent
     reward_calculator_type: HybridImpactPwn
     starting_sessions:

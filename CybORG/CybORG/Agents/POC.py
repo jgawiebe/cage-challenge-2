@@ -10,25 +10,27 @@ from CybORG.Agents.SimpleAgents.RedAvailabilityAgent import RedAvailabilityAgent
 from CybORG.Agents.SimpleAgents.RedIntegrityAgent import RedIntegrityAgent
 
 if __name__ == "__main__":
-    print("Setup")
+
+    scenarios = ['Confidentiality', 'Availability', 'Integrity']
+    scenario = 'Confidentiality'
+
     path = str(inspect.getfile(CybORG))
-    #path = path[:-10] + '/Shared/Scenarios/Scenario_Confidentiality.yaml'
-    #path = path[:-10] + '/Shared/Scenarios/Scenario_Availability.yaml'
-    path = path[:-10] + '/Shared/Scenarios/Scenario_Integrity.yaml'
+    path = path[:-10] + f'/Shared/Scenarios/Scenario_{scenario}.yaml'
 
-    agents = {'Red': RedIntegrityAgent,'Green': GreenAgent}
+    # red and blue agents are pulled from the scenario file.
+    # This makes for less front-end code. Green agent is optional.
+    # It would be cool to modify the reward calculator here but it
+    # gets read in from the scenario by the EnvController.
+    agents = {'Green': GreenAgent}
     env = CybORG(path, 'sim', agents=agents)
-    
-    agent_name = 'Blue'
-    #agent = BlueReactRestoreAgent()
 
-    results = env.reset(agent=agent_name)
+    results = env.reset(agent='Blue')
 
     reward = 0
     for _ in range(30):
         hosts = []
         success = False
-        results = env.step(agent=agent_name)
+        results = env.step(agent='Blue')
         for obs_info in results.observation:
             if type(results.observation[obs_info]) == dict:
                 hosts.append(results.observation[obs_info]['System info']['Hostname'])
@@ -40,7 +42,5 @@ if __name__ == "__main__":
 
         reward += results.reward
     print('Final Score: ', round(reward, ndigits=1))
-
-# NOTE: currently no rewards given for pwn in A, I scenarios. 
 
 

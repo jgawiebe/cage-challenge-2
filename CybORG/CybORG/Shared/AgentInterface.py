@@ -10,8 +10,8 @@ from CybORG.Shared.BlueRewardCalculator import HybridAvailabilityConfidentiality
 from CybORG.Shared.Observation import Observation
 from CybORG.Shared.RedRewardCalculator import DistruptRewardCalculator, PwnRewardCalculator, \
     HybridImpactPwnRewardCalculator
-from CybORG.Shared.NewRedRewardCalculator import DoSRewardCalculator, TamperRewardCalculator
-from CybORG.Shared.NewBlueRewardCalculator import QoSRewardCalculator, IntegrityRewardCalculator
+from CybORG.Shared.NewRedRewardCalculator import DoSRewardCalculator, TamperRewardCalculator, HybridDoSRewardCalculator, HybridTamperRewardCalculator
+from CybORG.Shared.NewBlueRewardCalculator import QoSRewardCalculator, IntegrityRewardCalculator, HybridQoSRewardCalculator, HybridIntegrityRewardCalculator
 from CybORG.Shared.Results import Results
 from CybORG.Shared.RewardCalculator import RewardCalculator, EmptyRewardCalculator
 
@@ -144,6 +144,14 @@ class AgentInterface:
             calc = IntegrityRewardCalculator(agent_name, scenario)
         elif reward_calculator == 'RedIntegrity':
             calc = TamperRewardCalculator(agent_name, scenario)
+        elif reward_calculator == 'HybridBlueAvailability':
+            calc = HybridQoSRewardCalculator(agent_name, scenario)
+        elif reward_calculator == 'HybridRedAvailability':
+            calc = HybridDoSRewardCalculator(agent_name, scenario)
+        elif reward_calculator == 'HybridBlueIntegrity':
+            calc = HybridIntegrityRewardCalculator(agent_name, scenario)
+        elif reward_calculator == 'HybridRedIntegrity':
+            calc = HybridTamperRewardCalculator(agent_name, scenario)
         else:
             raise ValueError(f"Invalid calculator selection: {reward_calculator} for agent {agent_name}")
         return calc

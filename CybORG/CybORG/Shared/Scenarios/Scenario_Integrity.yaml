@@ -67,7 +67,7 @@ Agents:
       - Misinform
       - Restore
       - DataRepair
-    agent_type: SleepAgent
+    agent_type: BlueReactRestoreAgent
     reward_calculator_type: BlueIntegrity
     starting_sessions:
       - hostname: User0
@@ -261,7 +261,7 @@ Agents:
     - ExploitRemoteService
     - PrivilegeEscalate
     - Tamper
-    agent_type: SleepAgent
+    agent_type: RedIntegrityAgent
     reward_calculator_type: RedIntegrity
     starting_sessions:
     - hostname: User0

@@ -64,10 +64,9 @@ Agents:
       - Monitor
       - Analyse
       - Remove
-      - Misinform
       - Restore
     agent_type: SleepAgent
-    reward_calculator_type: BlueConfidentiality
+    reward_calculator_type: HybridBlueAvailability
     starting_sessions:
       - hostname: User0
         name: VeloUser0
@@ -259,8 +258,10 @@ Agents:
     - DiscoverNetworkServices
     - ExploitRemoteService
     - PrivilegeEscalate
-    agent_type: RedMeanderAgent
-    reward_calculator_type: RedConfidentiality
+    - Impact
+    - Disrupt
+    agent_type: RedAvailabilityAgent
+    reward_calculator_type: HybridRedAvailability
     starting_sessions:
     - hostname: User0
       name: RedPhish
@@ -332,7 +333,7 @@ Hosts:
       User0:
         Interfaces: All
     ConfidentialityValue: None
-    AvailabilityValue: None
+    AvailabilityValue: Low
   User1:
     AWS_Info: []
     image: windows_user_host1
@@ -341,7 +342,7 @@ Hosts:
         Interfaces: IP Address
       User1:
         Interfaces: All
-    AvailabilityValue: None
+    AvailabilityValue: Low
   User2:
     AWS_Info: []
     image: windows_user_host2
@@ -350,7 +351,7 @@ Hosts:
         Interfaces: IP Address
       User2:
         Interfaces: All
-    AvailabilityValue: None
+    AvailabilityValue: Low
   User3:
     AWS_Info: []
     image: linux_user_host1
@@ -359,7 +360,7 @@ Hosts:
         Interfaces: IP Address
       User3:
         Interfaces: All
-    AvailabilityValue: None
+    AvailabilityValue: Low
   User4:
     AWS_Info: []
     image: linux_user_host2
@@ -368,7 +369,7 @@ Hosts:
         Interfaces: IP Address
       User4:
         Interfaces: All
-    AvailabilityValue: None
+    AvailabilityValue: Low
 Subnets:
   Enterprise:
     Hosts:

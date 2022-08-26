@@ -6,9 +6,17 @@ from CybORG.Agents import TestAgent
 from CybORG.Agents.Wrappers.FixedFlatWrapper import FixedFlatWrapper
 from CybORG.Agents.Wrappers.IntListToAction import IntListToActionWrapper
 from CybORG.Agents.Wrappers.OpenAIGymWrapper import OpenAIGymWrapper
+from CybORG.Agents.Wrappers.BaseWrapper import BaseWrapper
 
 MAX_STEPS_PER_GAME = 20
 MAX_EPS = 100
+
+class ObservationTrimWrapper(BaseWrapper):
+    def __init__(self, env: BaseWrapper=None, agent=None):
+        super().__init__(env, agent)
+
+    def observation_change(self, obs):
+        return obs[0:238] + obs[2218:2231] + obs[2348:2528] + obs [2708:2733]+ obs[2808:2816]
 
 def run_training_example(scenario):
     print("Setup")
@@ -16,7 +24,7 @@ def run_training_example(scenario):
     path = path[:-10] + f'/Shared/Scenarios/{scenario}.yaml'
 
     agent_name = 'Red'
-    cyborg = OpenAIGymWrapper(agent_name=agent_name, env=IntListToActionWrapper(FixedFlatWrapper(CybORG(path, 'sim'))))
+    cyborg = OpenAIGymWrapper(agent_name=agent_name, env=IntListToActionWrapper(ObservationTrimWrapper(FixedFlatWrapper(CybORG(path, 'sim')))))
 
     observation = cyborg.reset(agent=agent_name)
     action_space = cyborg.get_action_space(agent_name)
@@ -41,4 +49,4 @@ def run_training_example(scenario):
         agent.end_episode()
 
 if __name__ == "__main__":
-    run_training_example('Scenario1')
+    run_training_example('Scenario2')

@@ -18,7 +18,9 @@ from CybORG.Shared.Enums import TrinaryEnum, ProcessType, ProcessState, SessionT
 from CybORG.Shared.RedRewardCalculator import REWARD_MAX_DECIMAL_PLACES
 from CybORG.Tests.EphemeralPort import Win2008EphemeralPort, PID, LinuxEphemeralPort
 
-@pytest.mark.skip
+from CybORG.Shared.Actions.AbstractActions.Tamper import Tamper
+
+#@pytest.mark.skip
 def test_red_killchain_scenario1b():
     # create cyborg environment
     path = str(inspect.getfile(CybORG))
@@ -47,13 +49,19 @@ def test_red_killchain_scenario1b():
         assert not result.done
         assert result.observation['success'] == expected_observation['success']
 
-    def red_remote_service_exploit(expected_observation, ip_address, reward):
-        action = ExploitRemoteService(ip_address=ip_address, agent='Red', session=session)
+#    def red_remote_service_exploit(expected_observation, ip_address, reward):
+#        action = ExploitRemoteService(ip_address=ip_address, agent='Red', session=session)
+#        result = cyborg.step(action=action, agent='Red')
+#        # test if output of observation matches expected output
+#        assert result.reward == round(reward, REWARD_MAX_DECIMAL_PLACES)
+#        assert not result.done
+#        assert result.observation['success'] == expected_observation['success']
+
+    # for debug only
+    def red_tamper(expected_observation, ip_address, reward):
+        action = Tamper(ip_address=ip_address, agent='Red', session=session)
         result = cyborg.step(action=action, agent='Red')
-        # test if output of observation matches expected output
         assert result.reward == round(reward, REWARD_MAX_DECIMAL_PLACES)
-        assert not result.done
-        assert result.observation['success'] == expected_observation['success']
 
     def red_privilege_escalate(expected_observation, hostname, reward):
         action = PrivilegeEscalate(hostname=hostname, agent='Red', session=session)
